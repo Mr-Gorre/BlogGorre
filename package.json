@@ -1,0 +1,14 @@
+{
+  "name": "bloggorre",
+  "version": "1.0.0",
+  "description": "My Personal Blog",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "MrGorre",
+  "license": "GPL-3.0"
+}
