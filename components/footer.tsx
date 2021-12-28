@@ -1,9 +1,33 @@
 import React from "react";
 
+import { FaVk, FaGithub } from 'react-icons/fa'
+
 function Footer({ children }) {
   return (
-    <footer>
-      {children}
+    <footer className="flex flex-row">
+      <div className="basis-1/3">
+        counter
+      </div>
+      <div className="basis-1/3">
+        AD
+      </div>
+      <div className="basis-1/3 p-6">
+        <ol>
+          <li className="">
+            <a href="https://vk.com/mrgorre" className="text-slate-600 hover:text-slate-900" target={'_blank'}>
+              <FaVk className="inline-block text-3xl m-2 align-middle" />
+              vk.com/mrgorre</a>
+          </li>
+          <li>
+            <a href="https://github.com/fily7" className=" text-slate-600 hover:text-slate-900" target={'_blank'}>
+              <FaGithub className=" inline-block text-3xl m-2 align-middle" />
+              <span>
+                github.com/fily7
+              </span>
+            </a>
+          </li>
+        </ol>
+      </div>
     </footer>
   )
 }

@@ -6,13 +6,16 @@ import Header from "./header";
 function Layout({ children }) {
   return (
     <>
-    <Header>
-      head
-    </Header>
-        {children}
-    <Footer>
-        foot
-    </Footer>
+      <div className="container mx-auto">
+        <Header>
+        </Header>
+        <div className="text-center">
+          {children}
+        </div>
+        <Footer>
+          foot
+        </Footer>
+      </div>
     </>
   )
 }

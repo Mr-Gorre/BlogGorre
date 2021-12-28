@@ -5,12 +5,9 @@ import Layout from "../components/layout"
 function Index() {
   return (
     <Layout>
-      <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-      <Link href={'/about'}>
-        <a>About</a>
-      </Link>
+      <h1 className="text-3xl font-bold underline p-6 m-6">
+        Hello world!
+      </h1>
     </Layout>
   )
 }

@@ -18,9 +18,6 @@ function About() {
           <p className="text-gray-500">Igor Potashev </p>
         </div>
       </div>
-      <Link href={'/'}>
-        <a>Back home</a>
-      </Link>
     </Layout>
   )
 }
