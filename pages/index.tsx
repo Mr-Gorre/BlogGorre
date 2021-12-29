@@ -6,7 +6,7 @@ function Index() {
   return (
     <Layout>
       <h1 className="text-3xl font-bold underline p-6 m-6">
-        Hello, world!
+        Hello, world!!!
       </h1>
     </Layout>
   );
