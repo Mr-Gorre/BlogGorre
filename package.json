@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "My Personal Blog",
   "scripts": {
+    "prestart": "npm run build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
