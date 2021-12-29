@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FaVk, FaGithub } from 'react-icons/fa'
+import { FaVk, FaGithub } from 'react-icons/fa';
 
 function Footer({ children }) {
   return (
@@ -14,12 +14,12 @@ function Footer({ children }) {
       <div className="basis-1/3 p-6">
         <ol>
           <li className="">
-            <a href="https://vk.com/MrGorre" className="text-slate-600 hover:text-slate-900" target={'_blank'}>
+            <a href="https://vk.com/MrGorre" className="text-slate-600 hover:text-slate-900" target={'_blank'} rel="noreferrer">
               <FaVk className="inline-block text-3xl m-2 align-middle" />
               vk.com/MrGorre</a>
           </li>
           <li>
-            <a href="https://github.com/Mr-Gorre" className=" text-slate-600 hover:text-slate-900" target={'_blank'}>
+            <a href="https://github.com/Mr-Gorre" className=" text-slate-600 hover:text-slate-900" target={'_blank'} rel="noreferrer">
               <FaGithub className=" inline-block text-3xl m-2 align-middle" />
               <span>
               github.com/Mr-Gorre
@@ -29,7 +29,7 @@ function Footer({ children }) {
         </ol>
       </div>
     </footer>
-  )
+  );
 }
 
-export default Footer
+export default Footer;

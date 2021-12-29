@@ -8,7 +8,7 @@ function Header({children}) {
       <Nav></Nav>
       {children}
     </header>
-  )
+  );
 }
 
-export default Header
+export default Header;

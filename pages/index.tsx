@@ -1,6 +1,6 @@
-import Link from "next/link"
-import React from "react"
-import Layout from "../components/layout"
+import Link from "next/link";
+import React from "react";
+import Layout from "../components/layout";
 
 function Index() {
   return (
@@ -9,8 +9,8 @@ function Index() {
         Hello world!
       </h1>
     </Layout>
-  )
+  );
 }
 
 
-export default Index
+export default Index;

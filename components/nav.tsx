@@ -17,8 +17,8 @@ function Nav(){
         <a> Posts </a>
       </Link>
     </nav>
-  )
+  );
 }
 
 
-export default Nav
+export default Nav;
