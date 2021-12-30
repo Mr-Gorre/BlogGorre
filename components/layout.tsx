@@ -9,7 +9,7 @@ function Layout({ children }) {
       <div className="container mx-auto">
         <Header>
         </Header>
-        <div className="text-center">
+        <div>
           {children}
         </div>
         <Footer>
