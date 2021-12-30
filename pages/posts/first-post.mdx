@@ -1,0 +1,673 @@
+# Кодер рожает блогера
+
+В лучших традициях, таких историй, брать какое-то готовое решение для своего блога нельзя
+Да и пользоваться знакомыми технологиями тоже не вариант
+
+## Всё с ноля
+
+По этому начинаем все с ноля и учимся на ходу
+
+```bash
+mkdir BlogGorre
+npm init
+git init
+git add package.json
+git commit -m "Init"
+```
+
+Проходим в сотый раз -  [гайд по добавлению ssh ключей в github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+
+Попутно создаем репозиторий на github.com выбираем лицензии и `.gitignore`... Хотя лучше было сразу создать репо и сделать `git clone`
+
+Но нас не взять, мы сразу красиво делать не умеем, поэтому делаем такую фигню (благополучно найдено с помощью гугла):
+
+```bash
+git remote add origin git@github.com:Mr-Gorre/BlogGorre.git
+git branch --set-upstream-to=origin/main master
+git push origin HEAD:main
+```
+
+из-за разницы в именнах веток (они сами так назвались я не виноватый) `git push` дает такое:
+
+```bash
+fatal: The upstream branch of your current branch does not match
+the name of your current branch.  To push to the upstream branch
+on the remote, use
+
+    git push origin HEAD:main
+
+To push to the branch of the same name on the remote, use
+
+    git push origin HEAD
+
+To choose either option permanently, see push.default in 'git help config'.
+```
+
+Нууууу и ладно `git push origin HEAD:main` наш вариант, потом ветку `master` поменяю на `main` и должно быть норм
+
+Попытки вкатится в REACT через `create-react-app` почему то приводят постоянно к каким то тоннам сообщениям от npm'a. А поскольку я глупенький, то сообщения о 16 критических уязвимостях меня пугают. После ~~гугления~~ анализа ситуации, было решено что вариант снизу вообще норм и предупреждений ноль
+
+```bash
+npm i react react-dom next
+```
+
+Так теперь ставим **eslint** для **next**'a, ибо надо да и `;` будет за меня раставлять. И будем в **Typescript** все фигачить потому что JS без типов это прям совсем боль
+
+```bash
+npm i -D eslint eslint-config-next typescript @types/react @types/node
+```
+
+Еще что бы жизнь медом не казалась будем погружаться в **Tailwind**, а то все эти **Bootstrap**'ы итд для слабаков будем через **Хвостветер** позновать глубины **CSS**'а. Из доков узнаем что нам надо делать так:
+
+```bash
+npm i -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+В `tailwind.config.js` пишем такое, ибо в доках так написано, а кто я такой что бы спорить, непонятно что за фигня, но пусть будет
+
+```js filename="tailwind.config.js"
+module.exports = {
+  content: [
+      "./pages/**/*.{js,ts,jsx,tsx}",
+      "./components/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+      extend: {},
+  },
+  plugins: [],
+}
+```
+
+В `styles/global.css` пишем такое, ибо тоже доки
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+В `pages/index.tsx` рожаем следующее
+
+```tsx
+import Link from "next/link"
+import React from "react"
+
+function Index() {
+  return (
+    <div>
+      <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
+      <Link href={'/about'}>
+        <a>About</a>
+      </Link>
+    </div>
+  )
+}
+export default Index
+```
+
+Понимаем что что-то не так, обращаемся к чертогам разума ~~(Google)~~ и узнаем что надо замутить фай `pages/_app.tsx` для настройки приложени и собственно добавления глобальных стилей. Везде гуглится для `_app.js` и там чутка код другой, но мы за типы и по этому через небольшие мучения находим такое содержание которое нас полностью устраивает:
+
+```tsx
+import '../styles/global.css'
+import { AppProps } from 'next/app';
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />
+}
+
+export default MyApp
+```
+
+Там дальше эксперименты с **Ветровым хвостом** и `pages/index.tsx` и `pages/about.tsx`. Рождаем `components\layout.tsx` с таким сложнейшим содержанием которое 300 раз поменяется еще:
+```tsx
+import React from "react";
+
+function Layout({ children }) {
+  return (
+    <>
+      <div> Heelo</div>
+      <div>
+        {children}
+      </div>
+    </>
+  )
+}
+
+export default Layout;
+```
+
+И пробуем **Layout** на `pages/about.tsx`
+```tsx
+import Link from "next/link";
+import React from "react";
+import Layout from "../components/layout";
+
+
+
+function About() {
+  return (
+    <Layout>
+      <div className="p-6 bg-black max-w-sm mx-auto text-white rounded-xl flex space-x-4">
+        <div className="shrink-0">
+          <img src="/images/profile.jpg" alt="" className="h-12 w-12 rounded-full" />
+        </div>
+        <div>
+          <div className="text-xl font-medium">
+            Hello, world!
+          </div>
+          <p className="text-gray-500">Igor Potashev </p>
+        </div>
+      </div>
+      <Link href={'/'}>
+        <a>Back home</a>
+      </Link>
+    </Layout>
+  )
+}
+
+export default About;
+```
+
+На данный момент результат мучений выглядит убого, но многообещающе:
+
+![первый скрин](/images/first_post/frirst_screenshot.png)
+
+Где-то примерно на этих порах создается `posts/first_post.md` где записано все что выше и что ниже, поэтому скорее всего я что-то забыл в первой части что-то написать что я делал.
+
+## Передохнули и пошли дальше
+
+Сам пост пока нравится писать больше чем код.
+
+Пора наделать всякой структуры сайту, ага, что бы красво модульно вся фигня, что бы тысяча файлов агага. Создаем `components/footer.tsx`. И видим
+
+![4 космоса](/images/first_post/space4.png)
+
+Заколебался постоянно переделывать отступы с 4 на 2, значит самое время вспомнить про **EditorConfig** ставим расширение в **VS Code** и файлик `.editorconfig` пишем в него
+
+```ini
+indent_style = space
+indent_size = 2
+root = true
+```
+
+И радуемся, создаем `components/header.tsx` и видим тоже самое
+
+![4 космоса](/images/first_post/space4.png)
+
+Эээээ вспоминаем что ни фига не помним как правильно писать конфиги и пишем нормальный `.editorconfig` благополучно взятый из интернетов
+
+```ini
+root = true
+
+[*]
+charset = utf-8
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+max_line_length = 0
+trim_trailing_whitespace = false
+
+[COMMIT_EDITMSG]
+max_line_length = 0
+```
+
+Еееее работает, итого у нас есть пара новых компонентов `components/header.tsx`
+
+```tsx
+import React from "react";
+
+
+function Header({children}) {
+  return (
+    <header>
+      {children}
+    </header>
+  )
+}
+
+export default Header
+```
+
+и `components/footer.tsx`
+
+```ts
+import React from "react";
+
+function Footer({ children }) {
+  return (
+    <footer>
+      {children}
+    </footer>
+  )
+}
+
+export default Footer
+```
+
+и переделали `components/layout.tsx`
+
+```tsx
+import React from "react";
+import Footer from "./footer";
+import Header from "./header";
+
+
+function Layout({ children }) {
+  return (
+    <>
+      <Header>
+        head
+      </Header>
+      <div>
+        {children}
+      </div>
+      <Footer>
+        foot
+      </Footer>
+    </>
+  )
+}
+
+export default Layout;
+```
+
+И теперь везде будем юзать **Layout** пойдем посмторим что там творится с нашей главной
+
+![уродство](/images/first_post/ugly_homepage.png)
+
+Ну и уродство конечно. Ну начинается дезигн, **Figma** пока пускай полежит в сторонке потом её поизучаю. Буду постаринке писать рандомную чушню и гуглить, добавим иконки помучеем компоненты и добавим `components/nav.tsx` и получилося такое
+
+![пустое шт](/images/first_post/empty_sht.png)
+
+## МАМА я devops
+
+Ну и уродство ... все пора разворачивать на прод. Сделаем подготовку `npx next lint`, оно нам говорит что ~~я лох~~:
+
+```bash
+Failed to compile.
+
+./pages/about.tsx
+12:11  Warning: Do not use <img>. Use Image from 'next/image' instead. See https://nextjs.org/docs/messages/no-img-element.  @next/next/no-img-element
+
+./components/footer.tsx
+17:13  Error: Using target="_blank" without rel="noreferrer" (which implies rel="noopener") is a security risk in older browsers: see https://mathiasbynens.github.io/rel-noopener/#recommendations  react/jsx-no-target-blank
+22:13  Error: Using target="_blank" without rel="noreferrer" (which implies rel="noopener") is a security risk in older browsers: see https://mathiasbynens.github.io/rel-noopener/#recommendations  react/jsx-no-target-blank
+```
+
+Следуем рекомендациям, вносим правки, хапаем такое:
+
+```bash
+Server Error
+Error: Image with src "/images/profile.jpg" must use "width" and "height" properties or "layout='fill'" property.
+
+This error happened while generating the page. Any console logs will be displayed in the terminal window.
+```
+
+Че тебе от меня надо? Ладно лезем в гугл ищем как пользоваться `next/image` экспериментируем с `<Image />` и параметром `layout` хапанув непоняток зачем так сложно все делать, приходим к такому итогу
+
+```tsx
+<div className="h-12 w-12">
+  <Image src={"/images/profile.jpg"} width={100} height={100} className="rounded-full" alt="Igor Potashev"/>
+</div>
+```
+
+Еще раз `npx next lint` :
+
+```bash
+✔ No ESLint warnings or errors
+```
+
+Каеф, гуляем по файлам и видим что `;` не раставлены, да бл, лезем настраивать **ESLint** `.eslintrc.json`:
+
+```json
+{
+  "extends": "next/core-web-vitals",
+  "rules":{
+    "semi": ["error", "always"]
+  }
+}
+```
+
+`npx next lint` видим кучу ошибок, делаем `npx next lint --fix`
+
+```bash
+✔ No ESLint warnings or errors
+```
+
+В этот раз все красиво, в `package.json` добавляем `prestart`
+
+```json
+"scripts": {
+  "prestart": "npm run build",
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "next lint"
+}
+````
+
+Делаем `npm run start` видим что все хорошо, пора деплоить!!! Выберем самый простой способ развертывания (нет) - **Docker**. Посмотрев этот [видос](https://www.youtube.com/watch?v=gAkwW2tuIqE) понимаем что все что нам нужно это 11 минут практики (нет) и полные уверености идем применять **Docker** на практике, создаем `Dockerfile`
+
+
+```docker
+FROM node:16
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+ENV PORT=3000
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+```
+
+и `.dockerignore`
+
+```txt
+node_modules
+next
+```
+
+делаем `docker build -t mrgorre/bloggorre:1.0 .` и `docker run mrgorre/bloggorre:1.0  -p 3000:3000` и готовимся к проблемам... аннет, все работает, жесть, никогда такого в жизни небыло **Docker** ты ювелир, **onelove** просто!!!
+
+Пушим в **Docker Hub** публично почему бы и нет
+
+![пушим](/images/first_post/docker_push.png)
+
+Берем где-нить сервачек, конектимся по `ssh`. Создаем пользователя `sudo adduser mrgorre`, что бы не от `root` херачить, добавляем в `sudo` `sudo usermod -aG sudo mrgorre` в `~/.ssh/authorized_keys` пихаем публичный ключ, что бы залезать без пароля
+
+Побегаем [инструкцию](https://docs.docker.com/engine/install/ubuntu/) для **Docker** на **Ubuntu** в частности:
+
+```bash
+sudo apt-get update
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
+
+Все по кайфу, делаем `docker pull mrgorre/bloggorre:1.0` и получаем:
+
+```bash
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/images/create?fromImage=mrgorre%2Fbloggorre&tag=latest": dial unix /var/run/docker.sock: connect: permission denied
+```
+
+Я так и знал, сволочь теперь мне придется 2 часа гуглить че с этим делать и в итоге оно работать всеравно не будет.... ААААААА
+
+```bash
+sudo chmod 666 /var/run/docker.sock
+```
+
+За 2 минуты гугла находим решение сверху и повторяем `docker pull mrgorre/bloggorre:1.0`, затем `docker run -p 3000:3000 mrgorre/bloggorre:1.0` Заходим [http://212.193.49.186:3000](http://212.193.49.186:3000) и все работает. Госпади **Docker** всетаки лучший!!!
+
+Так теперь привяжем `nginx` (там типо тоже можно в контенере, но я по старинке сделаю) и сертификат **Let's Encrypt**
+
+```bash
+sudo apt install nginx
+```
+
+Удаляем стандартную фигню
+
+```basg
+sudo rm /etc/nginx/sites-enabled/default
+```
+
+И создаем наш конфиг `sudo vim /etc/nginx/sites-available/mrgorre` с таким конфигом (тут без гугла чисто на опыте)
+
+```nginx
+server {
+  listen 80;
+
+  server_name _;
+
+  location / {
+    proxy_pass http://localhost:3000/;
+    include /etc/nginx/proxy_params;
+  }
+}
+```
+
+Делаем линк `sudo ln -s /etc/nginx/sites-available/mrgorre /etc/nginx/sites-enabled/` проверяем `sudo nginx -t` видим что все ок и `sudo nginx -s reload` Заходим [http://212.193.49.186/](http://212.193.49.186/) все оке. Дальше покупаем и прописываем доменное имя, у меня это [mrgorre.online](https://mrgorre.online/), само собой надо подождать пока везде в DNS пропишется
+
+Дальше поставим `certbot` по этой [инструкции](https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal) нам надо сделать вот такое
+
+```bash
+sudo apt install snapd
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+Получаем сертификат (предпочитаю в ручную прописывать в nginx'e):
+
+```bash
+    sudo certbot certonly -d mrgorre.online
+```
+
+Выбираем `1: Nginx Web Server plugin (nginx)` и в случае если мы все сделали так как надо видим:
+
+```txt
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/mrgorre.online/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/mrgorre.online/privkey.pem
+This certificate expires on 2022-03-28.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+```
+
+И правим `/etc/nginx/sites-available/mrgorre`
+
+```nginx
+server {
+  listen 80;
+
+  server_name _;
+
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl http2;
+
+  ssl_certificate /etc/letsencrypt/live/mrgorre.online/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/mrgorre.online/privkey.pem;
+  ssl_protocols TLSv1.3 TLSv1.2;
+
+  server_name _;
+
+  location / {
+    proxy_pass http://localhost:3000;
+    include /etc/nginx/proxy_params;
+  }
+}
+```
+
+![прод](/images/first_post/in_prod.png)
+
+Бум все работает, сайт у нас говно, зато на проде!
+
+## Обновы головная боль
+
+Там запятой НЕТ!!!
+
+![орфография моя слабая сторона](/images/first_post/comma.png)
+
+ну ппппп... полна жизнь разочарований. Правим `pages/index.tsx`
+
+```tsx
+import Link from "next/link";
+import React from "react";
+import Layout from "../components/layout";
+
+function Index() {
+  return (
+    <Layout>
+      <h1 className="text-3xl font-bold underline p-6 m-6">
+        Hello, world!
+      </h1>
+    </Layout>
+  );
+}
+
+
+export default Index;
+```
+
+Хоба, проблема решена ... но не на проде, эм че будем делать? Ну полюбому собирать новый образ `docker build -t mrgorre/bloggorre:latest .` и запушим его сразу `docker push mrgorre/bloggorre:latest` и замечаем что **Docker** имеет хитрый кэш что бы не гонять все свои слои, а гоняет только измененые, ну слава богу, а то я думал придется по 1,5 GB ради каждой запятой заливать.
+
+На серваке хлопаем все контенеры `docker rm -vf $(docker ps -aq)` и образы  `docker rmi -f $(docker images -aq)` тянем и запускаем обнову
+
+```bash
+docker pull mrgorre/bloggorre:latest
+docker run -p 3000:3000 --name blog -d  mrgorre/bloggorre:latest
+```
+
+Пишем скрипт `deploy.sh`
+
+```bash
+docker pull mrgorre/bloggorre:latest
+docker rm -vf blog
+docker run -p 3000:3000 --name blog -d  mrgorre/bloggorre:latest
+```
+
+И воу, когда нам понадобится запулить обнову скрипт у нас вытянет последнюю версию, удалит текущий контейнер и запустит новый с тем же именем. КАЕФ так можно жить. Не забываем дать разрешение на исполнение `chmod u+x deploy.sh`
+
+На своей машине в `~\.ssh\config` пишем такое
+
+```config
+Host blog
+    HostName 212.193.49.186
+    User mrgorre
+```
+И теперь на нашей тачке можно сделать так `ssh blog '~/deploy.sh'` и вообще на сервак ходить не надо.
+
+Было замечено что стартует очень как долго, да и билд на серваке делать такое себе, туда по идее надо уже готовое все лить. Так что в `package.json` удаляем
+
+```json
+"prestart": "npm run build",
+```
+
+Дальше билдим `npm run build` видим что все хорошо и следом билдим образ пушим пулим [~~пуринг пуш~~](https://www.youtube.com/watch?v=lfJpSd47fzM)
+
+```bash
+docker build -t mrgorre/bloggorre:latest .
+docker push mrgorre/bloggorre:latest
+ssh blog '~/deploy.sh'
+```
+
+Напрашивается еще один скрипт, но на кодерской машине. Вообще можно написать несколько скриптов что бы билд в `stage`, в `dev`, в `prod`. Давайте проверим не наплодили ли мы всякой фигни `docker ps -a` говорит что только один контейнер, а `docker images -a`
+
+![засоряем жесткий](/images/first_post/docker_images.png)
+
+Вселенский разум подсказывает что есть `docker image prune -af` удаляет все образы с которыми нет ни одного связаного контейнера, добавляем в `deploy.sh`
+
+ченить меняем и снова проверяем, работает все прекрасно лишние образы удаляются.
+
+Все равно как то долго собирается и пушится надо посмотреть что нам доки с гайдами рекомендуют. По фразе **"next docker"** всевышний дал нам ответ что в `Dockerfile` надо написать следующее
+```docker
+# Install dependencies only when needed
+FROM node:alpine AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+# Rebuild the source code only when needed
+FROM node:alpine AS builder
+WORKDIR /app
+COPY . .
+COPY --from=deps /app/node_modules ./node_modules
+RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+
+# Production image, copy all the files and run next
+FROM node:alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+# You only need to copy next.config.js if you are NOT using the default configuration
+# COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+CMD ["node_modules/.bin/next", "start"]
+```
+Японский бог!!! В 11 минутном видосе такого не было, че это за жесть и что оно делает? Ладно пробуем к себе, вроде не отходил сильно от идеологии **NextJS** может сработает, также немного правим `.dockerignore`
+```txt
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+```
+Замечаем что используется `yarn` вместо `npm` следовательно делаем `npm install --global yarn`, удаляем `package-lock.json` и делаем `yarn install`. После делаем
+```bash
+docker build -t mrgorre/bloggorre:latest .
+docker push mrgorre/bloggorre:latest
+ssh blog '~/deploy.sh'
+```
+После проделаных пертрубаций все работает и образ стал весить 300+MB вместо 1.5 GB, не плохо. При этих всех махинациях у меня залился в 0 жесткий (SSD 128 надо давно поменять). По этому пошли выяснять как поменять место для **Docker'a**. Гоголь нам шепчет такой ответ
+```bash
+wsl --shutdown
+wsl --export docker-desktop-data docker-desktop-data.tar
+wsl --unregister docker-desktop-data
+wsl --import docker-desktop-data D:\docker-new-repo\ docker-desktop-data.tar --version 2
+```
+Ибо имеем опыт **WSL** понимаем что тут мигрирует **всл-ку** и пользуемся утилитой **[LxRunOffline](https://github.com/DDoSolitary/LxRunOffline)**
+(Храни бог того кто её сделал) что бы сделать проще
+```bash
+wsl --shutdown
+LxRunOffline.exe m -n docker-desktop-data -d E:\wsl\docker-desktop-data
+LxRunOffline.exe m -n docker-desktop -d E:\wsl\docker-desktop
+```
+Стартуем **Docker** и пробуем нашу комбинацию
+```bash
+docker build -t mrgorre/bloggorre:latest .
+docker push mrgorre/bloggorre:latest
+ssh blog '~/deploy.sh'
+```
+Почему то билдится и пушится дольше. Но в принципе все хорошо, схема рабочая.
+
+## Итогось
+
+Через небольшие мучения и познание нового, мы разродились абсолютно пустым сайтом [mrgorre.online](https://mrgorre.online) всего то за каких-то день полтора, причем он уже на проде и готов к заливам обновлений. И при этом написали здоровеный пост, полный всякой фигни.

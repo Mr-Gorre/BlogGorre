@@ -1,0 +1,166 @@
+# Попытки в контент
+
+И так у нас есть первый пост о том как я делал сайт в файлике **Markdown**, я им прям доволен и сайт я им прям вообще не доволен. Итого надо запулить посты
+
+## Обдумываем варианты
+
+Можно поднять базу туда валить **Меткувниз** и преобразовывать в `html` или хранить уже преобразованый `html`. Но чет пахнет стариной и сложностью, должен быть более простой способ, можно просто преобразовать в `html` потом в `JSX/TSX` но чет тоже фу. Наверное кто-то делал такое, должны быть же нормальные люди, а не как я, пойдем поспрашимаем людей (Google).
+
+Небольшие поиски привели нас к этой [статье](https://nextjs.org/blog/markdown), неплохо но все еще сложно. Ищем дальше. Находим вот такое [сокровище](https://mdxjs.com/). Понятно куда копать нужно, перекопав кучу непонятных статей где почему то все ловят каеф от токого что перелапачивают **Markdown** в **JS'e** находим что можно сделать файлик `next.config.js` с такием добром
+
+```js
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+})
+module.exports = withMDX({
+  pageExtensions: ['js', 'jsx', 'mdx'],
+})
+```
+
+и просто обращаться по имени mdx и будет ЩАСТЬЕ, срочно делаем это, не забываем поставить необходимые модуля
+
+```bash
+yarn add @next/mdx @mdx-js/loader @mdx-js/react`
+```
+
+и не забываем в `Dockerfile раскоментить эту срочку
+
+```docker
+COPY --from=builder /app/next.config.js ./
+```
+
+Проверям... все упало...хмммм... А ну да, мы же за **Typescript**, по этому правим
+
+```js
+    pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+```
+
+И все заработало
+
+![страх](/images/about_first_post/without_style.png)
+
+Ну и уродство... кстати пока рыскал понял что **Layout** можно прописать для всего сайта в `pages/_app.tsx`
+
+```tsx
+import '../styles/global.css';
+import { AppProps } from 'next/app';
+import Layout from '../components/layout';
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </>
+  );
+}
+
+export default MyApp;
+```
+
+Соответсвено во всех страницах удаляем **Layout**, почему-то правда все это пишут в `pages/_document.tsx`, а не в `pages/_app.tsx`, чет с текстом поцентру прям совсем страшно в `components/layout.tsx`
+
+```tsx
+import React from "react";
+import Footer from "./footer";
+import Header from "./header";
+
+
+function Layout({ children }) {
+  return (
+    <>
+      <div className="container mx-auto">
+        <Header>
+        </Header>
+        <div>
+          {children}
+        </div>
+        <Footer>
+          foot
+        </Footer>
+      </div>
+    </>
+  );
+}
+
+export default Layout;
+
+```
+
+![still ugly](/images/about_first_post/without_text-center.png)
+
+Все еще уродливо, но уже не так. Смотрим че там в тегах на сайте, вроде раставлены, правильно. **Tailwind** ты цуко все поломал? Удаляем `import '../styles/global.css';` в `pages/_app.tsx`, понимаем что **Хвостветровый** нам все кокнул. Идем искать как в этом "замечательном" фреймфорке решается эта проблема, а то я руками в каждый тег на странице классы писать не буду. Порывшись в доках понимаем что нам предлагают это решать в `styles/global.css` примерно таким образом
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+h1{
+  @apply p-4
+}
+```
+
+Воувоувоу нам предлагают для классов и тэгов использовать другие классы воувоувоу, а чеж не писать сразу **CSS**. Ну ладно ок, стилями займемся потом, сейчас надо разобраться подсветкой синтаксиса в блоках кода и желательно каким нибудь простым решением. Беглый поиск нам подсказал что большинство любит боль и страдания, но более глубокий поиск навел нас на эту [статью](https://dev.to/mikeesto/next-js-mdx-w-code-highlighting-16fi) из нее понятно что надо
+```
+yarn add remark-prism
+```
+и поправить `next.config.js` следующим образом
+```js
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [require("remark-prism")],
+  },
+})
+module.exports = withMDX({
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+})
+```
+и в `pages/_app.tsx` добавим стилей
+```tsx
+import '../styles/global.css';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import Layout from '../components/layout';
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <>
+      <Head>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/dracula-prism/dist/css/dracula-prism.css"
+          ></link>
+      </Head>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </>
+  );
+}
+
+export default MyApp;
+```
+Проверяем и видим вот такую радость
+
+![NOOOOORM](/images/about_first_post/with_remark.png)
+
+Нуууу с этим можно работать, дальше немного приводим в порядок `pages/posts/first-post.mdx` растовляем подсказки для подсветки синтаксиса
+
+![mdx](/images/about_first_post/mdx.png)
+
+меняем тему на привычную в `pages/_app.tsx` поменяв ссылочку
+```tsx
+<link
+      rel="stylesheet"
+      href="https://unpkg.com/prism-themes@1.6.0/themes/prism-vsc-dark-plus.css"
+    ></link>
+```
+И такой результат
+
+![NOOOOOOOOOOOOOORM](/images/about_first_post/vscodedark.png)
+
+Пошли крутить стили
