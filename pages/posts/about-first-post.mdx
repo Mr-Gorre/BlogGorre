@@ -163,4 +163,42 @@ export default MyApp;
 
 ![NOOOOOOOOOOOOOORM](/images/about_first_post/vscodedark.png)
 
-Пошли крутить стили
+Пошли крутить стили ... спустя небольшое количество мучений рождаем такой `style/global.css`
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+h1 {
+  @apply p-4 text-3xl font-bold
+}
+
+h2 {
+  @apply p-6 text-2xl font-bold
+}
+p {
+  @apply py-1 px-2
+}
+
+a {
+  @apply text-blue-500 font-bold
+}
+a:hover {
+  @apply text-blue-700 underline
+}
+
+p img {
+  @apply my-4 border-2 border-cyan-900 rounded
+}
+
+p code {
+  @apply bg-gray-300 px-2 py-1 m-1 text-gray-800 inline-block rounded
+}
+
+```
+
+Итого:
+
+![result](/images/about_first_post/stage.png)
