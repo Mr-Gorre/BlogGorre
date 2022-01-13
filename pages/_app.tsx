@@ -13,6 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             rel="stylesheet"
             href="https://unpkg.com/prism-themes@1.6.0/themes/prism-vsc-dark-plus.css"
           ></link>
+          <title>Тех блог о всяком | BlogGorre</title>
       </Head>
       <Layout>
         <Component {...pageProps} />
