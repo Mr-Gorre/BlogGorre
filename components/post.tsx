@@ -16,25 +16,24 @@ interface IProps {
 }
 
 
-function Post({...props}: IProps) {
+function Post({ ...props }: IProps) {
 
-  const post =props.post
-  return(
+  const post = props.post;
+  return (
     <div className="post">
-      <Link href={post.url}>
+      <Link href={post.url} passHref>
         <div>
-
-        <a>
-          {post.title}
-        </a>
-        <p>
-          {post.description}
-        </p>
+          <a>
+            {post.title}
+          </a>
+          <p>
+            {post.description}
+          </p>
         </div>
       </Link>
     </div>
-  )
+  );
 }
 
-export type {IPost};
+export type { IPost };
 export default Post;

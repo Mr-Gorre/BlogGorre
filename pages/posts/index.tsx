@@ -18,10 +18,10 @@ function Posts() {
       url: "/posts/about-first-post",
       description: "Приводим немного сайт в порядок что бы не совсем страшно было"
     }
-  ]
+  ];
   const postList = posts.reverse().map((post) =>
     <Post key={post.id} post={post}></Post>
-  )
+  );
   return(
     <>
       <div>
