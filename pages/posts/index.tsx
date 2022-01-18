@@ -8,13 +8,13 @@ function Posts() {
   const posts: IPost[] = [
     {
       id: 1,
-      title: "Попытки в контент",
+      title: "Кодер рожает блогера",
       url: "/posts/first-post",
       description: "Делаем быстренько сайт и заливаем на прод, не профессионально, но быстро и работает"
     },
     {
       id: 2,
-      title: "Кодер рожает блогера",
+      title: "Попытки в контент",
       url: "/posts/about-first-post",
       description: "Приводим немного сайт в порядок что бы не совсем страшно было"
     }
