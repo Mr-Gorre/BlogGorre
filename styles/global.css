@@ -2,7 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.remark-highlight pre{
+  @apply border border-primary-active  rounded-lg m-2
+}
+
 @layer components{
+
 
   h1 {
     @apply p-4 text-3xl font-bold
@@ -16,18 +21,30 @@
   }
 
   a {
-    @apply text-blue-500 font-bold
+    @apply text-primary font-bold
   }
   a:hover {
-    @apply text-blue-700 underline
+    @apply text-primary-active
   }
 
   p img {
-    @apply my-4 border-2 border-cyan-900 rounded
+    @apply border border-primary-active rounded-lg
   }
 
   p code {
-    @apply bg-gray-300 px-2  m-1 text-gray-800 inline-block rounded
+    @apply bg-primary-active px-2  m-1 text-secondary inline-block rounded
   }
 
+  footer {
+    @apply pt-20
+  }
+  .post {
+    @apply p-4 m-4 cursor-pointer
+  }
+  .post a {
+    @apply pl-4 text-primary
+  }
+  .post:hover a{
+    @apply text-primary-active
+  }
 }

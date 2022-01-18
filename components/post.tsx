@@ -20,11 +20,11 @@ function Post({...props}: IProps) {
 
   const post =props.post
   return(
-    <div className="post group">
+    <div className="post">
       <Link href={post.url}>
         <div>
 
-        <a className="group-hover:underline">
+        <a>
           {post.title}
         </a>
         <p>
