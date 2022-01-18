@@ -1,39 +1,32 @@
 import Link from "next/link";
 import React from "react";
+import Post, { IPost } from "../../components/post";
 
-
-interface Post {
-  id: number,
-  title: string,
-  url: string,
-  description?: string,
-  publish_date?: Date
-}
 
 function Posts() {
 
-  const posts: Post[] = [
+  const posts: IPost[] = [
     {
       id: 1,
-      title: "Post 1",
-      url: "/posts/first-post"
+      title: "Попытки в контент",
+      url: "/posts/first-post",
+      description: "Делаем быстренько сайт и заливаем на прод, не профессионально, но быстро и работает"
     },
     {
       id: 2,
-      title: "Post 2",
-      url: "/posts/about-first-post"
+      title: "Кодер рожает блогера",
+      url: "/posts/about-first-post",
+      description: "Приводим немного сайт в порядок что бы не совсем страшно было"
     }
   ]
   const postList = posts.reverse().map((post) =>
-    <li key={post.id}>
-      <Link href={post.url}>{post.title}</Link>
-    </li>
+    <Post key={post.id} post={post}></Post>
   )
   return(
     <>
-      <ul className="text-center">
+      <div>
         {postList}
-      </ul>
+      </div>
     </>
   );
 }
