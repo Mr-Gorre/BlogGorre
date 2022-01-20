@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 
 const htmlInner =`<!-- Remarkbox - Your readers want to communicate with you -->
@@ -41,14 +41,14 @@ const htmlInner =`<!-- Remarkbox - Your readers want to communicate with you -->
     },
     document.getElementById("remarkbox-iframe")
   );
-</script>`
+</script>`;
 
 function Comment() {
   return(
     <div dangerouslySetInnerHTML={{__html: htmlInner}}>
 
     </div>
-  )
+  );
 }
 
-export default Comment
+export default Comment;
