@@ -22,14 +22,9 @@ function Post({ ...props }: IProps) {
   return (
     <div className="post">
       <Link href={post.url} passHref>
-        <div>
-          <a>
-            {post.title}
-          </a>
-          <p>
-            {post.description}
-          </p>
-        </div>
+        <a>
+          {post.title}
+        </a>
       </Link>
     </div>
   );
