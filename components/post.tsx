@@ -21,7 +21,7 @@ function Post({ ...props }: IProps) {
   const post = props.post;
   return (
     <div className="post">
-      <Link href={post.url} passHref>
+      <Link href={post.url}>
         <a>
           {post.title}
         </a>
